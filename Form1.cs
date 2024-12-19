@@ -6,5 +6,10 @@ namespace OP_Macro
         {
             InitializeComponent();
         }
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+
+        }
     }
 }
