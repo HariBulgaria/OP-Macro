@@ -140,6 +140,7 @@ namespace OP_Macro
             clickToggleButton.TabIndex = 18;
             clickToggleButton.Text = "Toggle";
             clickToggleButton.UseVisualStyleBackColor = true;
+            clickToggleButton.Click += clickToggleButton_Click;
             // 
             // clickHSButton
             // 
@@ -158,7 +159,7 @@ namespace OP_Macro
             labelRepTimes.AutoSize = true;
             labelRepTimes.Location = new Point(587, 83);
             labelRepTimes.Name = "labelRepTimes";
-            labelRepTimes.Size = new Size(41, 15);
+            labelRepTimes.Size = new Size(42, 15);
             labelRepTimes.TabIndex = 1;
             labelRepTimes.Text = "Times:";
             // 
@@ -184,10 +185,11 @@ namespace OP_Macro
             RepetitionCB.AutoSize = true;
             RepetitionCB.Location = new Point(587, 29);
             RepetitionCB.Name = "RepetitionCB";
-            RepetitionCB.Size = new Size(115, 19);
+            RepetitionCB.Size = new Size(116, 19);
             RepetitionCB.TabIndex = 14;
             RepetitionCB.Text = "Toggle repetition";
             RepetitionCB.UseVisualStyleBackColor = true;
+            RepetitionCB.CheckedChanged += RepetitionCB_CheckedChanged;
             // 
             // CTypeCB
             // 
@@ -245,6 +247,9 @@ namespace OP_Macro
             TBMilliseconds.TabIndex = 8;
             TBMilliseconds.Text = "1000";
             TBMilliseconds.TextAlign = HorizontalAlignment.Right;
+            TBMilliseconds.KeyDown += TBMilliseconds_KeyDown;
+            TBMilliseconds.KeyPress += TBMilliseconds_KeyPress;
+            TBMilliseconds.Leave += TBMilliseconds_Leave;
             // 
             // labelSeconds
             // 
@@ -281,6 +286,9 @@ namespace OP_Macro
             TBSeconds.TabIndex = 4;
             TBSeconds.Text = "0";
             TBSeconds.TextAlign = HorizontalAlignment.Right;
+            TBSeconds.KeyDown += TBSeconds_KeyDown;
+            TBSeconds.KeyPress += TBSeconds_KeyPress;
+            TBSeconds.Leave += TBSeconds_Leave;
             // 
             // TBMinutes
             // 
@@ -290,6 +298,9 @@ namespace OP_Macro
             TBMinutes.TabIndex = 3;
             TBMinutes.Text = "0";
             TBMinutes.TextAlign = HorizontalAlignment.Right;
+            TBMinutes.KeyDown += TBMinutes_KeyDown;
+            TBMinutes.KeyPress += TBMinutes_KeyPress;
+            TBMinutes.Leave += TBMinutes_Leave;
             // 
             // TBHours
             // 
@@ -299,6 +310,9 @@ namespace OP_Macro
             TBHours.TabIndex = 2;
             TBHours.Text = "0";
             TBHours.TextAlign = HorizontalAlignment.Right;
+            TBHours.KeyDown += TBHours_KeyDown;
+            TBHours.KeyPress += TBHours_KeyPress;
+            TBHours.Leave += TBHours_Leave;
             // 
             // panel1
             // 
@@ -340,7 +354,7 @@ namespace OP_Macro
             labelTextRep.AutoSize = true;
             labelTextRep.Location = new Point(587, 87);
             labelTextRep.Name = "labelTextRep";
-            labelTextRep.Size = new Size(41, 15);
+            labelTextRep.Size = new Size(42, 15);
             labelTextRep.TabIndex = 19;
             labelTextRep.Text = "Times:";
             // 
@@ -349,13 +363,14 @@ namespace OP_Macro
             textCheckBox.AutoSize = true;
             textCheckBox.Location = new Point(587, 31);
             textCheckBox.Name = "textCheckBox";
-            textCheckBox.Size = new Size(115, 19);
+            textCheckBox.Size = new Size(116, 19);
             textCheckBox.TabIndex = 19;
             textCheckBox.Text = "Toggle repetition";
             textCheckBox.UseVisualStyleBackColor = true;
             // 
             // textNumBox
             // 
+            textNumBox.Enabled = false;
             textNumBox.Location = new Point(646, 85);
             textNumBox.Name = "textNumBox";
             textNumBox.Size = new Size(88, 23);
@@ -452,7 +467,7 @@ namespace OP_Macro
             replayTimePassedLabel.BackColor = Color.Transparent;
             replayTimePassedLabel.Location = new Point(477, 45);
             replayTimePassedLabel.Name = "replayTimePassedLabel";
-            replayTimePassedLabel.Size = new Size(72, 15);
+            replayTimePassedLabel.Size = new Size(73, 15);
             replayTimePassedLabel.TabIndex = 32;
             replayTimePassedLabel.Text = "Time passed";
             // 
@@ -614,7 +629,7 @@ namespace OP_Macro
             teleportTPCaughtLabel.AutoSize = true;
             teleportTPCaughtLabel.Location = new Point(78, 87);
             teleportTPCaughtLabel.Name = "teleportTPCaughtLabel";
-            teleportTPCaughtLabel.Size = new Size(62, 15);
+            teleportTPCaughtLabel.Size = new Size(63, 15);
             teleportTPCaughtLabel.TabIndex = 38;
             teleportTPCaughtLabel.Text = "TP Caught";
             // 
@@ -632,7 +647,7 @@ namespace OP_Macro
             teleportPositionLabel.AutoSize = true;
             teleportPositionLabel.Location = new Point(78, 45);
             teleportPositionLabel.Name = "teleportPositionLabel";
-            teleportPositionLabel.Size = new Size(39, 15);
+            teleportPositionLabel.Size = new Size(38, 15);
             teleportPositionLabel.TabIndex = 36;
             teleportPositionLabel.Text = "Index:";
             // 
@@ -760,6 +775,7 @@ namespace OP_Macro
             // autoclicker
             // 
             autoclicker.Interval = int.MaxValue;
+            autoclicker.Tick += autoclicker_Tick;
             // 
             // Form1
             // 
