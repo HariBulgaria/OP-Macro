@@ -19,6 +19,7 @@ namespace OP_Macro
         private uint mouse_up = 0x04;
         private DateTime lastRecordTime;
         private List<MouseEventRecord> recordedEvents = new List<MouseEventRecord>();
+        private List<Coord> coords = new List<Coord>();
 
         // Imports from user32.dll
         [DllImport("user32.dll")]
@@ -50,6 +51,8 @@ namespace OP_Macro
             bool textRegister = RegisterHotKey(this.Handle, 2, 0, (uint)Keys.F4);
             bool recordRegister = RegisterHotKey(this.Handle, 3, 0, (uint)Keys.F5);
             bool replayRegister = RegisterHotKey(this.Handle, 4, 0, (uint)Keys.F6);
+            bool firstCoordsRegister = RegisterHotKey(this.Handle, 5, 0, (uint)Keys.F2);
+            bool secondCoordsRegister = RegisterHotKey(this.Handle, 6, 0, (uint)Keys.F3);
         }
 
         protected override void WndProc(ref Message m)
@@ -70,7 +73,45 @@ namespace OP_Macro
                 }
                 else if (m.WParam.ToInt32() == 4)
                 {
-
+                    // TODO =======================
+                }
+                else if (m.WParam.ToInt32() == 5)
+                {
+                    bool checker = false;
+                    teleportX1.Text = Cursor.Position.X.ToString();
+                    teleportY1.Text = Cursor.Position.Y.ToString();
+                    foreach (var coord in coords)
+                    {
+                        if (coord.Id == 1)
+                        {
+                            coord.X = int.Parse(teleportX1.Text);
+                            coord.Y = int.Parse(teleportY1.Text);
+                            checker = true;
+                        }
+                    }
+                    if (!checker)
+                    {
+                        coords.Add(new Coord(1, int.Parse(teleportX1.Text), int.Parse(teleportY1.Text)));
+                    }
+                }
+                else if (m.WParam.ToInt32() == 6)
+                {
+                    bool checker = false;
+                    teleportX2.Text = Cursor.Position.X.ToString();
+                    teleportY2.Text = Cursor.Position.Y.ToString();
+                    foreach (var coord in coords)
+                    {
+                        if (coord.Id == 2)
+                        {
+                            coord.X = int.Parse(teleportX2.Text);
+                            coord.Y = int.Parse(teleportY2.Text);
+                            checker = true;
+                        }
+                    }
+                    if (!checker)
+                    {
+                        coords.Add(new Coord(2, int.Parse(teleportX2.Text), int.Parse(teleportY2.Text)));
+                    }
                 }
             }
             base.WndProc(ref m);
