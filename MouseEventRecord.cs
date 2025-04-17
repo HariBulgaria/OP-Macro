@@ -11,5 +11,6 @@ namespace OP_Macro
         public int X { get; set; }       // X-coordinate of the mouse click
         public int Y { get; set; }       // Y-coordinate of the mouse click
         public int Delay { get; set; }   // Delay in milliseconds before this event is replayed
+        public int Button { get; set; }
     }
 }
