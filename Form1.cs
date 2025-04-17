@@ -7,7 +7,6 @@ namespace OP_Macro
     {
         // Timers
         private System.Windows.Forms.Timer autoclickerTimer;
-        //private System.Windows.Forms.Timer recordTimer;
         private System.Windows.Forms.Timer replayTimer;
 
         // Booleans
@@ -15,6 +14,10 @@ namespace OP_Macro
         private bool isAutoclickerDoubleClick = false;
         private bool isRecording = false;
         private bool isReplaying = false;
+
+        // Hotkey Memory
+        private uint autoclickerVK = 0; //add more for everything else when making hotkey settings
+        private uint textVK = 0;
 
         // Parameters
         private uint mouse_down = 0x02;
@@ -62,15 +65,13 @@ namespace OP_Macro
             TBSeconds.ContextMenuStrip = new ContextMenuStrip();
             TBMilliseconds.ContextMenuStrip = new ContextMenuStrip();
 
-            //recordTimer = new System.Windows.Forms.Timer();
-            //recordTimer.Interval = 1;
-            //recordTimer.Tick += RecordTimer_Tick;
-
             // Registering Hotkeys
             bool autoclickerRegister = RegisterHotKey(this.Handle, 1, 0, (uint)Keys.F1);
+            autoclickerVK = (uint)Keys.F1;
             bool firstCoordsRegister = RegisterHotKey(this.Handle, 5, 0, (uint)Keys.F2);
             bool secondCoordsRegister = RegisterHotKey(this.Handle, 6, 0, (uint)Keys.F3);
             bool textRegister = RegisterHotKey(this.Handle, 2, 0, (uint)Keys.F4);
+            textVK = (uint)Keys.F4;
             bool recordRegister = RegisterHotKey(this.Handle, 3, 0, (uint)Keys.F5);
             bool replayRegister = RegisterHotKey(this.Handle, 4, 0, (uint)Keys.F6);
             bool teleportRegister = RegisterHotKey(this.Handle, 7, 0, (uint)Keys.F7);
@@ -192,42 +193,59 @@ namespace OP_Macro
         {
             if (replayIndex >= recordedEvents.Count)
             {
-                replayTimer.Stop(); // Stops the replay when all events are done
+                // Restart the replay loop
+                replayTimer.Stop();
                 replayIndex = 0;
+                replayTimer.Interval = Math.Max(recordedEvents[replayIndex].Delay, 1);
                 replayTimer.Start();
                 return;
             }
 
-            // Gets the next recorded event and moves the cursor
+            // Get the next recorded event
             var recordedEvent = recordedEvents[replayIndex];
+
+            // Move cursor to the recorded position
             SetCursorPos(recordedEvent.X, recordedEvent.Y);
 
-            // Moves to the next event in order
+            // Simulate mouse click based on the recorded button
+            switch (recordedEvent.Button)
+            {
+                case WM_LBUTTONDOWN:
+                    mouse_event(mouse_down | mouse_up, (uint)recordedEvent.X, (uint)recordedEvent.Y, 0, 0);
+                    break;
+                case WM_RBUTTONDOWN:
+                    mouse_event(0x08 | 0x10, (uint)recordedEvent.X, (uint)recordedEvent.Y, 0, 0); // Right down + up
+                    break;
+                case WM_MBUTTONDOWN:
+                    mouse_event(0x20 | 0x40, (uint)recordedEvent.X, (uint)recordedEvent.Y, 0, 0); // Middle down + up
+                    break;
+            }
+
+            // Move to the next event
             replayIndex++;
+
+            // If there are more events, update the timer interval for the next event
+            if (replayIndex < recordedEvents.Count)
+            {
+                replayTimer.Interval = Math.Max(recordedEvents[replayIndex].Delay, 1);
+            }
         }
-
-        //private async void RecordTimer_Tick(object sender, EventArgs e) // Tick for records
-        //{
-        //    int delay = (int)(DateTime.Now - lastRecordTime).TotalMilliseconds;
-        //    lastRecordTime = DateTime.Now;
-
-        //    // Save the current mouse position and delay
-        //    recordedEvents.Add(new MouseEventRecord
-        //    {
-        //        X = Cursor.Position.X,
-        //        Y = Cursor.Position.Y,
-        //        Delay = delay
-        //    });
-        //}
 
         private IntPtr MouseHookCallback(int nCode, IntPtr wParam, IntPtr lParam)
         {
             if (nCode >= 0 && isRecording)
             {
                 int message = wParam.ToInt32();
-                if (message == WM_LBUTTONDOWN || message == WM_RBUTTONDOWN || message == WM_MBUTTONDOWN)
+                if (message == WM_LBUTTONDOWN || message == WM_RBUTTONDOWN || message == WM_MBUTTONDOWN || message == 0x0200) // 0x0200 = WM_MOUSEMOVE
                 {
                     int delay = (int)(DateTime.Now - lastRecordTime).TotalMilliseconds;
+
+                    // SKIP recording movements that happen too fast (optional, only for WM_MOUSEMOVE)
+                    if (message == 0x0200 && delay < 10)  // Example: only accept movement if at least 10ms passed
+                    {
+                        return CallNextHookEx(hookID, nCode, wParam, lParam);
+                    }
+
                     lastRecordTime = DateTime.Now;
 
                     var pos = Cursor.Position;
@@ -237,7 +255,7 @@ namespace OP_Macro
                         X = pos.X,
                         Y = pos.Y,
                         Delay = delay,
-                        Button = message // Save the button code
+                        Button = message
                     });
                 }
             }
@@ -252,14 +270,12 @@ namespace OP_Macro
                 isRecording = true;
                 recordedEvents.Clear();      // Clear previous recordings
                 lastRecordTime = DateTime.Now; // Set start time for recording
-                //recordTimer.Start();         // Start timer for recording
                 proc = MouseHookCallback;
                 hookID = SetWindowsHookEx(WH_MOUSE_LL, proc, GetModuleHandle(null), 0);
             }
             else
             {
                 isRecording = false;
-                //recordTimer.Stop();
                 UnhookWindowsHookEx(hookID);
             }
         }
@@ -558,6 +574,18 @@ namespace OP_Macro
             {
                 textNumBox.Enabled = false;
             }
+        }
+
+        private void clickHSButton_Click(object sender, EventArgs e)
+        {
+            HotkeySettings autoclickerHotkeySettings = new HotkeySettings(autoclickerVK);
+            autoclickerHotkeySettings.ShowDialog();
+        }
+
+        private void textHSButton_Click(object sender, EventArgs e)
+        {
+            HotkeySettings autoclickerHotkeySettings = new HotkeySettings(textVK);
+            autoclickerHotkeySettings.ShowDialog();
         }
     }
 }

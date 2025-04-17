@@ -63,18 +63,13 @@ namespace OP_Macro
             textTB = new TextBox();
             RARGroupBox = new GroupBox();
             replayLoopLabel = new Label();
-            replayClickCaughtLabel = new Label();
             replayTimePassedLabel = new Label();
             replayStatsCheckBox = new CheckBox();
             viewRecsButton = new Button();
             replayActionLabel = new Label();
-            replayToggleButton = new Button();
             replayHSButton = new Button();
             recordTimeLabel = new Label();
-            recordDiscardButton = new Button();
-            recordSaveButton = new Button();
             recordActionLabel = new Label();
-            recordToggleButton = new Button();
             panel4 = new Panel();
             recordHSButton = new Button();
             teleportGroupBox = new GroupBox();
@@ -158,6 +153,7 @@ namespace OP_Macro
             clickHSButton.TabIndex = 16;
             clickHSButton.Text = "Hotkey Settings";
             clickHSButton.UseVisualStyleBackColor = false;
+            clickHSButton.Click += clickHSButton_Click;
             // 
             // labelRepTimes
             // 
@@ -416,6 +412,7 @@ namespace OP_Macro
             textHSButton.TabIndex = 19;
             textHSButton.Text = "Hotkey Settings";
             textHSButton.UseVisualStyleBackColor = false;
+            textHSButton.Click += textHSButton_Click;
             // 
             // textTB
             // 
@@ -427,18 +424,13 @@ namespace OP_Macro
             // RARGroupBox
             // 
             RARGroupBox.Controls.Add(replayLoopLabel);
-            RARGroupBox.Controls.Add(replayClickCaughtLabel);
             RARGroupBox.Controls.Add(replayTimePassedLabel);
             RARGroupBox.Controls.Add(replayStatsCheckBox);
             RARGroupBox.Controls.Add(viewRecsButton);
             RARGroupBox.Controls.Add(replayActionLabel);
-            RARGroupBox.Controls.Add(replayToggleButton);
             RARGroupBox.Controls.Add(replayHSButton);
             RARGroupBox.Controls.Add(recordTimeLabel);
-            RARGroupBox.Controls.Add(recordDiscardButton);
-            RARGroupBox.Controls.Add(recordSaveButton);
             RARGroupBox.Controls.Add(recordActionLabel);
-            RARGroupBox.Controls.Add(recordToggleButton);
             RARGroupBox.Controls.Add(panel4);
             RARGroupBox.Controls.Add(recordHSButton);
             RARGroupBox.Location = new Point(11, 275);
@@ -454,21 +446,11 @@ namespace OP_Macro
             // 
             replayLoopLabel.AutoSize = true;
             replayLoopLabel.BackColor = Color.Transparent;
-            replayLoopLabel.Location = new Point(477, 85);
+            replayLoopLabel.Location = new Point(477, 65);
             replayLoopLabel.Name = "replayLoopLabel";
             replayLoopLabel.Size = new Size(39, 15);
             replayLoopLabel.TabIndex = 34;
             replayLoopLabel.Text = "Loops";
-            // 
-            // replayClickCaughtLabel
-            // 
-            replayClickCaughtLabel.AutoSize = true;
-            replayClickCaughtLabel.BackColor = Color.Transparent;
-            replayClickCaughtLabel.Location = new Point(477, 65);
-            replayClickCaughtLabel.Name = "replayClickCaughtLabel";
-            replayClickCaughtLabel.Size = new Size(72, 15);
-            replayClickCaughtLabel.TabIndex = 33;
-            replayClickCaughtLabel.Text = "ClickCaught";
             // 
             // replayTimePassedLabel
             // 
@@ -495,7 +477,7 @@ namespace OP_Macro
             // 
             viewRecsButton.FlatStyle = FlatStyle.Flat;
             viewRecsButton.Font = new Font("Segoe UI", 9F);
-            viewRecsButton.Location = new Point(593, 73);
+            viewRecsButton.Location = new Point(747, 73);
             viewRecsButton.Margin = new Padding(0);
             viewRecsButton.Name = "viewRecsButton";
             viewRecsButton.Size = new Size(141, 44);
@@ -512,18 +494,6 @@ namespace OP_Macro
             replayActionLabel.Size = new Size(70, 15);
             replayActionLabel.TabIndex = 29;
             replayActionLabel.Text = "ActionLabel";
-            // 
-            // replayToggleButton
-            // 
-            replayToggleButton.FlatStyle = FlatStyle.Flat;
-            replayToggleButton.Font = new Font("Segoe UI", 9F);
-            replayToggleButton.Location = new Point(747, 73);
-            replayToggleButton.Margin = new Padding(0);
-            replayToggleButton.Name = "replayToggleButton";
-            replayToggleButton.Size = new Size(141, 44);
-            replayToggleButton.TabIndex = 28;
-            replayToggleButton.Text = "Toggle";
-            replayToggleButton.UseVisualStyleBackColor = true;
             // 
             // replayHSButton
             // 
@@ -546,30 +516,6 @@ namespace OP_Macro
             recordTimeLabel.TabIndex = 26;
             recordTimeLabel.Text = "<<time>>";
             // 
-            // recordDiscardButton
-            // 
-            recordDiscardButton.FlatStyle = FlatStyle.Flat;
-            recordDiscardButton.Font = new Font("Segoe UI", 9F);
-            recordDiscardButton.Location = new Point(161, 73);
-            recordDiscardButton.Margin = new Padding(0);
-            recordDiscardButton.Name = "recordDiscardButton";
-            recordDiscardButton.Size = new Size(141, 44);
-            recordDiscardButton.TabIndex = 25;
-            recordDiscardButton.Text = "Discard";
-            recordDiscardButton.UseVisualStyleBackColor = true;
-            // 
-            // recordSaveButton
-            // 
-            recordSaveButton.FlatStyle = FlatStyle.Flat;
-            recordSaveButton.Font = new Font("Segoe UI", 9F);
-            recordSaveButton.Location = new Point(6, 73);
-            recordSaveButton.Margin = new Padding(0);
-            recordSaveButton.Name = "recordSaveButton";
-            recordSaveButton.Size = new Size(141, 44);
-            recordSaveButton.TabIndex = 24;
-            recordSaveButton.Text = "Save";
-            recordSaveButton.UseVisualStyleBackColor = true;
-            // 
             // recordActionLabel
             // 
             recordActionLabel.AutoSize = true;
@@ -578,18 +524,6 @@ namespace OP_Macro
             recordActionLabel.Size = new Size(70, 15);
             recordActionLabel.TabIndex = 23;
             recordActionLabel.Text = "ActionLabel";
-            // 
-            // recordToggleButton
-            // 
-            recordToggleButton.FlatStyle = FlatStyle.Flat;
-            recordToggleButton.Font = new Font("Segoe UI", 9F);
-            recordToggleButton.Location = new Point(321, 73);
-            recordToggleButton.Margin = new Padding(0);
-            recordToggleButton.Name = "recordToggleButton";
-            recordToggleButton.Size = new Size(141, 44);
-            recordToggleButton.TabIndex = 22;
-            recordToggleButton.Text = "Toggle";
-            recordToggleButton.UseVisualStyleBackColor = true;
             // 
             // panel4
             // 
@@ -808,9 +742,9 @@ namespace OP_Macro
             creditsLabel.AutoSize = true;
             creditsLabel.Location = new Point(404, 17);
             creditsLabel.Name = "creditsLabel";
-            creditsLabel.Size = new Size(90, 30);
+            creditsLabel.Size = new Size(107, 30);
             creditsLabel.TabIndex = 36;
-            creditsLabel.Text = "OP Macro v1.0\r\nBy H. Bohosyan\r\n";
+            creditsLabel.Text = "OP Utility Tool v1.0\r\nBy H. Bohosyan\r\n";
             // 
             // helpButton
             // 
@@ -845,7 +779,7 @@ namespace OP_Macro
             Controls.Add(clickGroupBox);
             FormBorderStyle = FormBorderStyle.FixedToolWindow;
             Name = "Form1";
-            Text = "OP Macro";
+            Text = "OP Utility Tool";
             clickGroupBox.ResumeLayout(false);
             clickGroupBox.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)repetitionsNumBox).EndInit();
@@ -896,15 +830,11 @@ namespace OP_Macro
         private Button recordToggle;
         private Panel panel4;
         private Button recordHSButton;
-        private Button recordDiscardButton;
-        private Button recordSaveButton;
         private Label recordTimeLabel;
-        private Button replayToggleButton;
         private Button replayHSButton;
         private CheckBox replayStatsCheckBox;
         private Button viewRecsButton;
         private Label replayActionLabel;
-        private Label replayClickCaughtLabel;
         private Label replayTimePassedLabel;
         private Label replayLoopLabel;
         private GroupBox teleportGroupBox;
@@ -925,7 +855,6 @@ namespace OP_Macro
         private Button clickHSButton;
         private Button textASButton;
         private Button textHSButton;
-        private Button recordToggleButton;
         private Panel panel6;
         private System.Windows.Forms.Timer autoclicker;
         private Label Y2Label;
