@@ -53,6 +53,9 @@ namespace OP_Macro
             TBHours = new TextBox();
             panel1 = new Panel();
             textGroupBox = new GroupBox();
+            richText3 = new Button();
+            richText2 = new Button();
+            richText1 = new Button();
             panel6 = new Panel();
             labelTextRep = new Label();
             textCheckBox = new CheckBox();
@@ -62,26 +65,25 @@ namespace OP_Macro
             textHSButton = new Button();
             textTB = new TextBox();
             RARGroupBox = new GroupBox();
+            recordClicksLabel = new Label();
+            recordStatsCheckBox = new CheckBox();
             replayLoopLabel = new Label();
-            replayTimePassedLabel = new Label();
             replayStatsCheckBox = new CheckBox();
-            viewRecsButton = new Button();
+            saveCaptureButton = new Button();
             replayActionLabel = new Label();
             replayHSButton = new Button();
-            recordTimeLabel = new Label();
             recordActionLabel = new Label();
             panel4 = new Panel();
             recordHSButton = new Button();
             teleportGroupBox = new GroupBox();
+            teleport2HSButton = new Button();
             Y2Label = new Label();
             X2Label = new Label();
             Y1Label = new Label();
             X1Label = new Label();
-            teleportTPCaughtLabel = new Label();
             teleportLoopsLabel = new Label();
             teleportPositionLabel = new Label();
             teleportCheckBox = new CheckBox();
-            teleportASButton = new Button();
             teleportY2 = new Label();
             teleportHSButton = new Button();
             teleportX2 = new Label();
@@ -138,7 +140,7 @@ namespace OP_Macro
             clickToggleButton.Name = "clickToggleButton";
             clickToggleButton.Size = new Size(141, 44);
             clickToggleButton.TabIndex = 18;
-            clickToggleButton.Text = "Toggle";
+            clickToggleButton.Text = "Включи";
             clickToggleButton.UseVisualStyleBackColor = true;
             clickToggleButton.Click += clickToggleButton_Click;
             // 
@@ -151,7 +153,7 @@ namespace OP_Macro
             clickHSButton.Name = "clickHSButton";
             clickHSButton.Size = new Size(141, 44);
             clickHSButton.TabIndex = 16;
-            clickHSButton.Text = "Hotkey Settings";
+            clickHSButton.Text = "Настройки за бърз клавиш";
             clickHSButton.UseVisualStyleBackColor = false;
             clickHSButton.Click += clickHSButton_Click;
             // 
@@ -160,9 +162,9 @@ namespace OP_Macro
             labelRepTimes.AutoSize = true;
             labelRepTimes.Location = new Point(587, 83);
             labelRepTimes.Name = "labelRepTimes";
-            labelRepTimes.Size = new Size(42, 15);
+            labelRepTimes.Size = new Size(38, 15);
             labelRepTimes.TabIndex = 1;
-            labelRepTimes.Text = "Times:";
+            labelRepTimes.Text = "Брой:";
             // 
             // repetitionsNumBox
             // 
@@ -187,9 +189,9 @@ namespace OP_Macro
             RepetitionCB.AutoSize = true;
             RepetitionCB.Location = new Point(587, 29);
             RepetitionCB.Name = "RepetitionCB";
-            RepetitionCB.Size = new Size(116, 19);
+            RepetitionCB.Size = new Size(93, 19);
             RepetitionCB.TabIndex = 14;
-            RepetitionCB.Text = "Toggle repetition";
+            RepetitionCB.Text = "Повторение";
             RepetitionCB.UseVisualStyleBackColor = true;
             RepetitionCB.CheckedChanged += RepetitionCB_CheckedChanged;
             // 
@@ -209,9 +211,9 @@ namespace OP_Macro
             labelClickType.AutoSize = true;
             labelClickType.Location = new Point(343, 83);
             labelClickType.Name = "labelClickType";
-            labelClickType.Size = new Size(62, 15);
+            labelClickType.Size = new Size(59, 15);
             labelClickType.TabIndex = 12;
-            labelClickType.Text = "Click type:";
+            labelClickType.Text = "Вид клик:";
             // 
             // MButtonCB
             // 
@@ -229,18 +231,18 @@ namespace OP_Macro
             labelMouseButton.AutoSize = true;
             labelMouseButton.Location = new Point(6, 83);
             labelMouseButton.Name = "labelMouseButton";
-            labelMouseButton.Size = new Size(85, 15);
+            labelMouseButton.Size = new Size(100, 15);
             labelMouseButton.TabIndex = 10;
-            labelMouseButton.Text = "Mouse button:";
+            labelMouseButton.Text = "Бутон на мишка:";
             // 
             // labelMilliseconds
             // 
             labelMilliseconds.AutoSize = true;
             labelMilliseconds.Location = new Point(485, 29);
             labelMilliseconds.Name = "labelMilliseconds";
-            labelMilliseconds.Size = new Size(73, 15);
+            labelMilliseconds.Size = new Size(81, 15);
             labelMilliseconds.TabIndex = 9;
-            labelMilliseconds.Text = "milliseconds";
+            labelMilliseconds.Text = "милисекунди";
             // 
             // TBMilliseconds
             // 
@@ -259,27 +261,27 @@ namespace OP_Macro
             labelSeconds.AutoSize = true;
             labelSeconds.Location = new Point(343, 29);
             labelSeconds.Name = "labelSeconds";
-            labelSeconds.Size = new Size(50, 15);
+            labelSeconds.Size = new Size(51, 15);
             labelSeconds.TabIndex = 7;
-            labelSeconds.Text = "seconds";
+            labelSeconds.Text = "секунди";
             // 
             // labelMinutes
             // 
             labelMinutes.AutoSize = true;
             labelMinutes.Location = new Point(203, 29);
             labelMinutes.Name = "labelMinutes";
-            labelMinutes.Size = new Size(50, 15);
+            labelMinutes.Size = new Size(48, 15);
             labelMinutes.TabIndex = 6;
-            labelMinutes.Text = "minutes";
+            labelMinutes.Text = "минути";
             // 
             // labelHours
             // 
             labelHours.AutoSize = true;
             labelHours.Location = new Point(79, 29);
             labelHours.Name = "labelHours";
-            labelHours.Size = new Size(37, 15);
+            labelHours.Size = new Size(32, 15);
             labelHours.TabIndex = 5;
-            labelHours.Text = "hours";
+            labelHours.Text = "часа";
             // 
             // TBSeconds
             // 
@@ -328,6 +330,9 @@ namespace OP_Macro
             // 
             // textGroupBox
             // 
+            textGroupBox.Controls.Add(richText3);
+            textGroupBox.Controls.Add(richText2);
+            textGroupBox.Controls.Add(richText1);
             textGroupBox.Controls.Add(panel6);
             textGroupBox.Controls.Add(labelTextRep);
             textGroupBox.Controls.Add(textCheckBox);
@@ -343,6 +348,42 @@ namespace OP_Macro
             textGroupBox.TabStop = false;
             textGroupBox.Text = "Text";
             // 
+            // richText3
+            // 
+            richText3.FlatStyle = FlatStyle.Flat;
+            richText3.Font = new Font("Segoe UI", 8F);
+            richText3.Location = new Point(301, 72);
+            richText3.Name = "richText3";
+            richText3.Size = new Size(141, 44);
+            richText3.TabIndex = 23;
+            richText3.Text = "Разширен текст 3";
+            richText3.UseVisualStyleBackColor = true;
+            richText3.Click += richText3_Click;
+            // 
+            // richText2
+            // 
+            richText2.FlatStyle = FlatStyle.Flat;
+            richText2.Font = new Font("Segoe UI", 8F);
+            richText2.Location = new Point(154, 72);
+            richText2.Name = "richText2";
+            richText2.Size = new Size(141, 44);
+            richText2.TabIndex = 22;
+            richText2.Text = "Разширен текст 2";
+            richText2.UseVisualStyleBackColor = true;
+            richText2.Click += richText2_Click;
+            // 
+            // richText1
+            // 
+            richText1.FlatStyle = FlatStyle.Flat;
+            richText1.Font = new Font("Segoe UI", 8F);
+            richText1.Location = new Point(7, 72);
+            richText1.Name = "richText1";
+            richText1.Size = new Size(141, 44);
+            richText1.TabIndex = 21;
+            richText1.Text = "Разширен текст 1";
+            richText1.UseVisualStyleBackColor = true;
+            richText1.Click += richText1_Click;
+            // 
             // panel6
             // 
             panel6.BorderStyle = BorderStyle.FixedSingle;
@@ -357,18 +398,18 @@ namespace OP_Macro
             labelTextRep.AutoSize = true;
             labelTextRep.Location = new Point(587, 87);
             labelTextRep.Name = "labelTextRep";
-            labelTextRep.Size = new Size(42, 15);
+            labelTextRep.Size = new Size(38, 15);
             labelTextRep.TabIndex = 19;
-            labelTextRep.Text = "Times:";
+            labelTextRep.Text = "Брой:";
             // 
             // textCheckBox
             // 
             textCheckBox.AutoSize = true;
             textCheckBox.Location = new Point(587, 31);
             textCheckBox.Name = "textCheckBox";
-            textCheckBox.Size = new Size(116, 19);
+            textCheckBox.Size = new Size(93, 19);
             textCheckBox.TabIndex = 19;
-            textCheckBox.Text = "Toggle repetition";
+            textCheckBox.Text = "Повторение";
             textCheckBox.UseVisualStyleBackColor = true;
             textCheckBox.CheckedChanged += textCheckBox_CheckedChanged;
             // 
@@ -389,8 +430,9 @@ namespace OP_Macro
             textASButton.Name = "textASButton";
             textASButton.Size = new Size(141, 44);
             textASButton.TabIndex = 20;
-            textASButton.Text = "Advanced Settings";
+            textASButton.Text = "Разширени настройки";
             textASButton.UseVisualStyleBackColor = true;
+            textASButton.Click += textASButton_Click;
             // 
             // panel3
             // 
@@ -410,7 +452,7 @@ namespace OP_Macro
             textHSButton.Name = "textHSButton";
             textHSButton.Size = new Size(141, 44);
             textHSButton.TabIndex = 19;
-            textHSButton.Text = "Hotkey Settings";
+            textHSButton.Text = "Настройки за бърз клавиш";
             textHSButton.UseVisualStyleBackColor = false;
             textHSButton.Click += textHSButton_Click;
             // 
@@ -423,13 +465,13 @@ namespace OP_Macro
             // 
             // RARGroupBox
             // 
+            RARGroupBox.Controls.Add(recordClicksLabel);
+            RARGroupBox.Controls.Add(recordStatsCheckBox);
             RARGroupBox.Controls.Add(replayLoopLabel);
-            RARGroupBox.Controls.Add(replayTimePassedLabel);
             RARGroupBox.Controls.Add(replayStatsCheckBox);
-            RARGroupBox.Controls.Add(viewRecsButton);
+            RARGroupBox.Controls.Add(saveCaptureButton);
             RARGroupBox.Controls.Add(replayActionLabel);
             RARGroupBox.Controls.Add(replayHSButton);
-            RARGroupBox.Controls.Add(recordTimeLabel);
             RARGroupBox.Controls.Add(recordActionLabel);
             RARGroupBox.Controls.Add(panel4);
             RARGroupBox.Controls.Add(recordHSButton);
@@ -442,48 +484,63 @@ namespace OP_Macro
             RARGroupBox.TabStop = false;
             RARGroupBox.Text = "Record and Replay";
             // 
+            // recordClicksLabel
+            // 
+            recordClicksLabel.AutoSize = true;
+            recordClicksLabel.Location = new Point(7, 46);
+            recordClicksLabel.Name = "recordClicksLabel";
+            recordClicksLabel.Size = new Size(59, 15);
+            recordClicksLabel.TabIndex = 36;
+            recordClicksLabel.Text = "Кликове: ";
+            recordClicksLabel.Visible = false;
+            // 
+            // recordStatsCheckBox
+            // 
+            recordStatsCheckBox.AutoSize = true;
+            recordStatsCheckBox.Location = new Point(321, 68);
+            recordStatsCheckBox.Margin = new Padding(3, 4, 3, 4);
+            recordStatsCheckBox.Name = "recordStatsCheckBox";
+            recordStatsCheckBox.Size = new Size(88, 19);
+            recordStatsCheckBox.TabIndex = 35;
+            recordStatsCheckBox.Text = "Статистики";
+            recordStatsCheckBox.UseVisualStyleBackColor = true;
+            recordStatsCheckBox.CheckedChanged += recordStatsCheckBox_CheckedChanged;
+            // 
             // replayLoopLabel
             // 
             replayLoopLabel.AutoSize = true;
             replayLoopLabel.BackColor = Color.Transparent;
-            replayLoopLabel.Location = new Point(477, 65);
+            replayLoopLabel.Location = new Point(477, 46);
             replayLoopLabel.Name = "replayLoopLabel";
-            replayLoopLabel.Size = new Size(39, 15);
+            replayLoopLabel.Size = new Size(77, 15);
             replayLoopLabel.TabIndex = 34;
-            replayLoopLabel.Text = "Loops";
-            // 
-            // replayTimePassedLabel
-            // 
-            replayTimePassedLabel.AutoSize = true;
-            replayTimePassedLabel.BackColor = Color.Transparent;
-            replayTimePassedLabel.Location = new Point(477, 45);
-            replayTimePassedLabel.Name = "replayTimePassedLabel";
-            replayTimePassedLabel.Size = new Size(73, 15);
-            replayTimePassedLabel.TabIndex = 32;
-            replayTimePassedLabel.Text = "Time passed";
+            replayLoopLabel.Text = "Повторения:";
+            replayLoopLabel.Visible = false;
             // 
             // replayStatsCheckBox
             // 
             replayStatsCheckBox.AutoSize = true;
-            replayStatsCheckBox.Location = new Point(642, 40);
+            replayStatsCheckBox.Location = new Point(653, 24);
             replayStatsCheckBox.Margin = new Padding(3, 4, 3, 4);
             replayStatsCheckBox.Name = "replayStatsCheckBox";
-            replayStatsCheckBox.Size = new Size(81, 19);
+            replayStatsCheckBox.Size = new Size(88, 19);
             replayStatsCheckBox.TabIndex = 31;
-            replayStatsCheckBox.Text = "More stats";
+            replayStatsCheckBox.Text = "Статистики";
             replayStatsCheckBox.UseVisualStyleBackColor = true;
+            replayStatsCheckBox.CheckedChanged += replayStatsCheckBox_CheckedChanged;
             // 
-            // viewRecsButton
+            // saveCaptureButton
             // 
-            viewRecsButton.FlatStyle = FlatStyle.Flat;
-            viewRecsButton.Font = new Font("Segoe UI", 9F);
-            viewRecsButton.Location = new Point(747, 73);
-            viewRecsButton.Margin = new Padding(0);
-            viewRecsButton.Name = "viewRecsButton";
-            viewRecsButton.Size = new Size(141, 44);
-            viewRecsButton.TabIndex = 30;
-            viewRecsButton.Text = "View Captures";
-            viewRecsButton.UseVisualStyleBackColor = true;
+            saveCaptureButton.FlatStyle = FlatStyle.Flat;
+            saveCaptureButton.Font = new Font("Segoe UI", 9F);
+            saveCaptureButton.Location = new Point(747, 73);
+            saveCaptureButton.Margin = new Padding(0);
+            saveCaptureButton.Name = "saveCaptureButton";
+            saveCaptureButton.Size = new Size(141, 44);
+            saveCaptureButton.TabIndex = 30;
+            saveCaptureButton.Text = "Запази запис";
+            saveCaptureButton.UseVisualStyleBackColor = true;
+            saveCaptureButton.Click += saveCaptureButton_Click;
             // 
             // replayActionLabel
             // 
@@ -491,9 +548,10 @@ namespace OP_Macro
             replayActionLabel.BackColor = Color.Transparent;
             replayActionLabel.Location = new Point(477, 25);
             replayActionLabel.Name = "replayActionLabel";
-            replayActionLabel.Size = new Size(70, 15);
+            replayActionLabel.Size = new Size(66, 15);
             replayActionLabel.TabIndex = 29;
-            replayActionLabel.Text = "ActionLabel";
+            replayActionLabel.Text = "Неактивно";
+            replayActionLabel.Visible = false;
             // 
             // replayHSButton
             // 
@@ -504,26 +562,19 @@ namespace OP_Macro
             replayHSButton.Name = "replayHSButton";
             replayHSButton.Size = new Size(141, 44);
             replayHSButton.TabIndex = 27;
-            replayHSButton.Text = "Hotkey Settings";
+            replayHSButton.Text = "Настройки за бърз клавиш";
             replayHSButton.UseVisualStyleBackColor = false;
-            // 
-            // recordTimeLabel
-            // 
-            recordTimeLabel.AutoSize = true;
-            recordTimeLabel.Location = new Point(230, 41);
-            recordTimeLabel.Name = "recordTimeLabel";
-            recordTimeLabel.Size = new Size(63, 15);
-            recordTimeLabel.TabIndex = 26;
-            recordTimeLabel.Text = "<<time>>";
+            replayHSButton.Click += replayHSButton_Click;
             // 
             // recordActionLabel
             // 
             recordActionLabel.AutoSize = true;
             recordActionLabel.Location = new Point(7, 25);
             recordActionLabel.Name = "recordActionLabel";
-            recordActionLabel.Size = new Size(70, 15);
+            recordActionLabel.Size = new Size(66, 15);
             recordActionLabel.TabIndex = 23;
-            recordActionLabel.Text = "ActionLabel";
+            recordActionLabel.Text = "Неактивно";
+            recordActionLabel.Visible = false;
             // 
             // panel4
             // 
@@ -543,20 +594,20 @@ namespace OP_Macro
             recordHSButton.Name = "recordHSButton";
             recordHSButton.Size = new Size(141, 44);
             recordHSButton.TabIndex = 21;
-            recordHSButton.Text = "Hotkey Settings";
+            recordHSButton.Text = "Настройки за бърз клавиш";
             recordHSButton.UseVisualStyleBackColor = false;
+            recordHSButton.Click += recordHSButton_Click;
             // 
             // teleportGroupBox
             // 
+            teleportGroupBox.Controls.Add(teleport2HSButton);
             teleportGroupBox.Controls.Add(Y2Label);
             teleportGroupBox.Controls.Add(X2Label);
             teleportGroupBox.Controls.Add(Y1Label);
             teleportGroupBox.Controls.Add(X1Label);
-            teleportGroupBox.Controls.Add(teleportTPCaughtLabel);
             teleportGroupBox.Controls.Add(teleportLoopsLabel);
             teleportGroupBox.Controls.Add(teleportPositionLabel);
             teleportGroupBox.Controls.Add(teleportCheckBox);
-            teleportGroupBox.Controls.Add(teleportASButton);
             teleportGroupBox.Controls.Add(teleportY2);
             teleportGroupBox.Controls.Add(teleportHSButton);
             teleportGroupBox.Controls.Add(teleportX2);
@@ -570,6 +621,19 @@ namespace OP_Macro
             teleportGroupBox.TabIndex = 3;
             teleportGroupBox.TabStop = false;
             teleportGroupBox.Text = "Teleport";
+            // 
+            // teleport2HSButton
+            // 
+            teleport2HSButton.BackColor = SystemColors.Control;
+            teleport2HSButton.FlatStyle = FlatStyle.Flat;
+            teleport2HSButton.Font = new Font("Segoe UI", 9F);
+            teleport2HSButton.Location = new Point(190, 73);
+            teleport2HSButton.Name = "teleport2HSButton";
+            teleport2HSButton.Size = new Size(141, 44);
+            teleport2HSButton.TabIndex = 105;
+            teleport2HSButton.Text = "Настройки за телепортация";
+            teleport2HSButton.UseVisualStyleBackColor = false;
+            teleport2HSButton.Click += teleport2HSButton_Click;
             // 
             // Y2Label
             // 
@@ -611,56 +675,38 @@ namespace OP_Macro
             X1Label.TabIndex = 101;
             X1Label.Text = "X1:";
             // 
-            // teleportTPCaughtLabel
-            // 
-            teleportTPCaughtLabel.AutoSize = true;
-            teleportTPCaughtLabel.Location = new Point(78, 87);
-            teleportTPCaughtLabel.Name = "teleportTPCaughtLabel";
-            teleportTPCaughtLabel.Size = new Size(63, 15);
-            teleportTPCaughtLabel.TabIndex = 38;
-            teleportTPCaughtLabel.Text = "TP Caught";
-            // 
             // teleportLoopsLabel
             // 
             teleportLoopsLabel.AutoSize = true;
-            teleportLoopsLabel.Location = new Point(78, 65);
+            teleportLoopsLabel.Location = new Point(96, 73);
             teleportLoopsLabel.Name = "teleportLoopsLabel";
-            teleportLoopsLabel.Size = new Size(42, 15);
+            teleportLoopsLabel.Size = new Size(77, 15);
             teleportLoopsLabel.TabIndex = 37;
-            teleportLoopsLabel.Text = "Loops:";
+            teleportLoopsLabel.Text = "Повторения:";
+            teleportLoopsLabel.Visible = false;
             // 
             // teleportPositionLabel
             // 
             teleportPositionLabel.AutoSize = true;
-            teleportPositionLabel.Location = new Point(78, 45);
+            teleportPositionLabel.Location = new Point(96, 46);
             teleportPositionLabel.Name = "teleportPositionLabel";
-            teleportPositionLabel.Size = new Size(38, 15);
+            teleportPositionLabel.Size = new Size(53, 15);
             teleportPositionLabel.TabIndex = 36;
-            teleportPositionLabel.Text = "Index:";
+            teleportPositionLabel.Text = "Индекс: ";
+            teleportPositionLabel.Visible = false;
             // 
             // teleportCheckBox
             // 
             teleportCheckBox.AutoSize = true;
             teleportCheckBox.BackColor = Color.Transparent;
-            teleportCheckBox.Location = new Point(79, 24);
+            teleportCheckBox.Location = new Point(96, 20);
             teleportCheckBox.Margin = new Padding(3, 4, 3, 4);
             teleportCheckBox.Name = "teleportCheckBox";
-            teleportCheckBox.Size = new Size(81, 19);
+            teleportCheckBox.Size = new Size(88, 19);
             teleportCheckBox.TabIndex = 35;
-            teleportCheckBox.Text = "More stats";
+            teleportCheckBox.Text = "Статистики";
             teleportCheckBox.UseVisualStyleBackColor = false;
-            // 
-            // teleportASButton
-            // 
-            teleportASButton.FlatStyle = FlatStyle.Flat;
-            teleportASButton.Font = new Font("Segoe UI", 8F);
-            teleportASButton.Location = new Point(190, 75);
-            teleportASButton.Margin = new Padding(0);
-            teleportASButton.Name = "teleportASButton";
-            teleportASButton.Size = new Size(141, 44);
-            teleportASButton.TabIndex = 22;
-            teleportASButton.Text = "Advanced Settings";
-            teleportASButton.UseVisualStyleBackColor = true;
+            teleportCheckBox.CheckedChanged += teleportCheckBox_CheckedChanged;
             // 
             // teleportY2
             // 
@@ -668,9 +714,9 @@ namespace OP_Macro
             teleportY2.BackColor = Color.Transparent;
             teleportY2.Location = new Point(30, 95);
             teleportY2.Name = "teleportY2";
-            teleportY2.Size = new Size(38, 15);
+            teleportY2.Size = new Size(65, 15);
             teleportY2.TabIndex = 9;
-            teleportY2.Text = "coord";
+            teleportY2.Text = "координат";
             // 
             // teleportHSButton
             // 
@@ -681,8 +727,9 @@ namespace OP_Macro
             teleportHSButton.Name = "teleportHSButton";
             teleportHSButton.Size = new Size(141, 44);
             teleportHSButton.TabIndex = 100;
-            teleportHSButton.Text = "Hotkey Settings";
+            teleportHSButton.Text = "Настройки за координати";
             teleportHSButton.UseVisualStyleBackColor = false;
+            teleportHSButton.Click += teleportHSButton_Click;
             // 
             // teleportX2
             // 
@@ -690,9 +737,9 @@ namespace OP_Macro
             teleportX2.BackColor = Color.Transparent;
             teleportX2.Location = new Point(30, 75);
             teleportX2.Name = "teleportX2";
-            teleportX2.Size = new Size(38, 15);
+            teleportX2.Size = new Size(65, 15);
             teleportX2.TabIndex = 8;
-            teleportX2.Text = "coord";
+            teleportX2.Text = "координат";
             // 
             // teleportY1
             // 
@@ -700,9 +747,9 @@ namespace OP_Macro
             teleportY1.BackColor = Color.Transparent;
             teleportY1.Location = new Point(30, 44);
             teleportY1.Name = "teleportY1";
-            teleportY1.Size = new Size(38, 15);
+            teleportY1.Size = new Size(65, 15);
             teleportY1.TabIndex = 7;
-            teleportY1.Text = "coord";
+            teleportY1.Text = "координат";
             // 
             // teleportX1
             // 
@@ -710,9 +757,9 @@ namespace OP_Macro
             teleportX1.BackColor = Color.Transparent;
             teleportX1.Location = new Point(30, 24);
             teleportX1.Name = "teleportX1";
-            teleportX1.Size = new Size(38, 15);
+            teleportX1.Size = new Size(65, 15);
             teleportX1.TabIndex = 6;
-            teleportX1.Text = "coord";
+            teleportX1.Text = "координат";
             // 
             // miscGroupBox
             // 
@@ -744,7 +791,7 @@ namespace OP_Macro
             creditsLabel.Name = "creditsLabel";
             creditsLabel.Size = new Size(107, 30);
             creditsLabel.TabIndex = 36;
-            creditsLabel.Text = "OP Utility Tool v1.0\r\nBy H. Bohosyan\r\n";
+            creditsLabel.Text = "OP Utility Tool v1.1\r\nОт H. Bohosyan\r\n";
             // 
             // helpButton
             // 
@@ -756,8 +803,9 @@ namespace OP_Macro
             helpButton.Name = "helpButton";
             helpButton.Size = new Size(141, 44);
             helpButton.TabIndex = 35;
-            helpButton.Text = "Need Help?";
+            helpButton.Text = "Помощ?";
             helpButton.UseVisualStyleBackColor = false;
+            helpButton.Click += helpButton_Click;
             // 
             // autoclicker
             // 
@@ -830,23 +878,19 @@ namespace OP_Macro
         private Button recordToggle;
         private Panel panel4;
         private Button recordHSButton;
-        private Label recordTimeLabel;
         private Button replayHSButton;
         private CheckBox replayStatsCheckBox;
-        private Button viewRecsButton;
+        private Button saveCaptureButton;
         private Label replayActionLabel;
-        private Label replayTimePassedLabel;
         private Label replayLoopLabel;
         private GroupBox teleportGroupBox;
         private Label teleportY2;
         private Label teleportX2;
         private Label teleportY1;
         private Label teleportX1;
-        private Button teleportASButton;
         private Button teleportHSButton;
         private Label teleportPositionLabel;
         private CheckBox teleportCheckBox;
-        private Label teleportTPCaughtLabel;
         private Label teleportLoopsLabel;
         private GroupBox miscGroupBox;
         private Button helpButton;
@@ -862,5 +906,11 @@ namespace OP_Macro
         private Label Y1Label;
         private Label X1Label;
         private System.Windows.Forms.Timer autoclickerRepetition;
+        private Button teleport2HSButton;
+        private Button richText3;
+        private Button richText2;
+        private Button richText1;
+        private CheckBox recordStatsCheckBox;
+        private Label recordClicksLabel;
     }
 }

@@ -1,0 +1,36 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="OP_Macro.Properties" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="autoclickerHotkeyProperty" Type="System.UInt32" Scope="User">
+      <Value Profile="(Default)">112</Value>
+    </Setting>
+    <Setting Name="textHotkeyProperty" Type="System.UInt32" Scope="User">
+      <Value Profile="(Default)">115</Value>
+    </Setting>
+    <Setting Name="recordHotkeyProperty" Type="System.UInt32" Scope="User">
+      <Value Profile="(Default)">116</Value>
+    </Setting>
+    <Setting Name="replayHotkeyProperty" Type="System.UInt32" Scope="User">
+      <Value Profile="(Default)">117</Value>
+    </Setting>
+    <Setting Name="firstCoordHotkeyProperty" Type="System.UInt32" Scope="User">
+      <Value Profile="(Default)">113</Value>
+    </Setting>
+    <Setting Name="secondCoordHotkeyProperty" Type="System.UInt32" Scope="User">
+      <Value Profile="(Default)">114</Value>
+    </Setting>
+    <Setting Name="teleportHotkeyProperty" Type="System.UInt32" Scope="User">
+      <Value Profile="(Default)">118</Value>
+    </Setting>
+    <Setting Name="richText1HotkeyProperty" Type="System.UInt32" Scope="User">
+      <Value Profile="(Default)">119</Value>
+    </Setting>
+    <Setting Name="richText2HotkeyProperty" Type="System.UInt32" Scope="User">
+      <Value Profile="(Default)">120</Value>
+    </Setting>
+    <Setting Name="richText3HotkeyProperty" Type="System.UInt32" Scope="User">
+      <Value Profile="(Default)">121</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>

@@ -1,6 +1,6 @@
 ﻿namespace OP_Macro
 {
-    partial class HotkeySettings
+    partial class CoordinatesHotkeySettings
     {
         /// <summary>
         /// Required designer variable.
@@ -29,9 +29,11 @@
         private void InitializeComponent()
         {
             startButton = new Button();
-            displayBox = new RichTextBox();
             doneButton = new Button();
+            displayBox = new RichTextBox();
             cancelButton = new Button();
+            startButtonSecond = new Button();
+            displayBoxSecond = new RichTextBox();
             SuspendLayout();
             // 
             // startButton
@@ -39,11 +41,22 @@
             startButton.FlatStyle = FlatStyle.Flat;
             startButton.Location = new Point(12, 12);
             startButton.Name = "startButton";
-            startButton.Size = new Size(100, 38);
-            startButton.TabIndex = 1;
-            startButton.Text = "Смени клавиш";
+            startButton.Size = new Size(100, 40);
+            startButton.TabIndex = 0;
+            startButton.Text = "Смени клавиш за координат 1";
             startButton.UseVisualStyleBackColor = true;
             startButton.Click += startButton_Click;
+            // 
+            // doneButton
+            // 
+            doneButton.FlatStyle = FlatStyle.Flat;
+            doneButton.Location = new Point(253, 13);
+            doneButton.Name = "doneButton";
+            doneButton.Size = new Size(100, 39);
+            doneButton.TabIndex = 4;
+            doneButton.Text = "Готово";
+            doneButton.UseVisualStyleBackColor = true;
+            doneButton.Click += doneButton_Click;
             // 
             // displayBox
             // 
@@ -55,21 +68,10 @@
             displayBox.TabIndex = 3;
             displayBox.Text = "";
             // 
-            // doneButton
-            // 
-            doneButton.FlatStyle = FlatStyle.Flat;
-            doneButton.Location = new Point(12, 58);
-            doneButton.Name = "doneButton";
-            doneButton.Size = new Size(100, 39);
-            doneButton.TabIndex = 4;
-            doneButton.Text = "Готово";
-            doneButton.UseVisualStyleBackColor = true;
-            doneButton.Click += doneButton_Click;
-            // 
             // cancelButton
             // 
             cancelButton.FlatStyle = FlatStyle.Flat;
-            cancelButton.Location = new Point(147, 58);
+            cancelButton.Location = new Point(253, 58);
             cancelButton.Name = "cancelButton";
             cancelButton.Size = new Size(100, 39);
             cancelButton.TabIndex = 5;
@@ -77,25 +79,51 @@
             cancelButton.UseVisualStyleBackColor = true;
             cancelButton.Click += cancelButton_Click;
             // 
-            // HotkeySettings
+            // startButtonSecond
             // 
-            ClientSize = new Size(259, 109);
+            startButtonSecond.FlatStyle = FlatStyle.Flat;
+            startButtonSecond.Location = new Point(12, 58);
+            startButtonSecond.Name = "startButtonSecond";
+            startButtonSecond.Size = new Size(100, 40);
+            startButtonSecond.TabIndex = 6;
+            startButtonSecond.Text = "Смени клавиш за координат 2";
+            startButtonSecond.UseVisualStyleBackColor = true;
+            startButtonSecond.Click += startButtonSecond_Click;
+            // 
+            // displayBoxSecond
+            // 
+            displayBoxSecond.BorderStyle = BorderStyle.FixedSingle;
+            displayBoxSecond.Enabled = false;
+            displayBoxSecond.Location = new Point(147, 60);
+            displayBoxSecond.Name = "displayBoxSecond";
+            displayBoxSecond.Size = new Size(100, 38);
+            displayBoxSecond.TabIndex = 7;
+            displayBoxSecond.Text = "";
+            // 
+            // CoordinatesHotkeySettings
+            // 
+            AutoScaleDimensions = new SizeF(7F, 15F);
+            AutoScaleMode = AutoScaleMode.Font;
+            ClientSize = new Size(364, 109);
+            Controls.Add(displayBoxSecond);
+            Controls.Add(startButtonSecond);
             Controls.Add(cancelButton);
-            Controls.Add(doneButton);
             Controls.Add(displayBox);
+            Controls.Add(doneButton);
             Controls.Add(startButton);
             FormBorderStyle = FormBorderStyle.FixedToolWindow;
-            Name = "HotkeySettings";
-            Text = "Hotkey Settings";
-            FormClosing += HotkeySettings_FormClosing;
-            Load += HotkeySettings_Load;
+            Name = "CoordinatesHotkeySettings";
+            Text = "Coordinates Hotkey Settings";
             ResumeLayout(false);
         }
 
         #endregion
+
         private Button startButton;
-        private RichTextBox displayBox;
         private Button doneButton;
+        private RichTextBox displayBox;
         private Button cancelButton;
+        private Button startButtonSecond;
+        private RichTextBox displayBoxSecond;
     }
 }

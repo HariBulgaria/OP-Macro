@@ -1,5 +1,8 @@
 using System.Diagnostics.Metrics;
 using System.Runtime.InteropServices;
+using System.Security.Policy;
+using System.Xml;
+using Newtonsoft.Json;
 
 namespace OP_Macro
 {
@@ -14,10 +17,19 @@ namespace OP_Macro
         private bool isAutoclickerDoubleClick = false;
         private bool isRecording = false;
         private bool isReplaying = false;
+        private bool listeningForKeys = true;
 
         // Hotkey Memory
-        private uint autoclickerVK = 0; //add more for everything else when making hotkey settings
-        private uint textVK = 0;
+        private uint autoclickerKey = 0; //add more for everything else when making hotkey settings
+        private uint textKey = 0;
+        private uint recordKey = 0;
+        private uint replayKey = 0;
+        private uint firstCoordKey = 0;
+        private uint secondCoordKey = 0;
+        private uint teleportKey = 0;
+        private uint richText1Key = 0;
+        private uint richText2Key = 0;
+        private uint richText3Key = 0;
 
         // Parameters
         private uint mouse_down = 0x02;
@@ -25,10 +37,13 @@ namespace OP_Macro
         private int replayIndex = 0;
         private int counter = 0;
         private int autoclickerRepCounter = 0;
+        private int loopsCounter = 0;
+        private int loopsCounterTeleport = 0;
+        private int recordClicksCounter = 0;
         private DateTime lastRecordTime;
         private List<MouseEventRecord> recordedEvents = new List<MouseEventRecord>();
         private List<Coord> coords = new List<Coord>();
-        private IntPtr hookID = IntPtr.Zero; // Bottom ones are for Record!
+        private IntPtr hookID = IntPtr.Zero; // Bottom ones are for recording any mouse input
         private LowLevelMouseProc proc;
         private delegate IntPtr LowLevelMouseProc(int nCode, IntPtr wParam, IntPtr lParam);
         private const int WH_MOUSE_LL = 14;
@@ -45,7 +60,7 @@ namespace OP_Macro
         private static extern bool SetCursorPos(int X, int Y);
         [DllImport("user32.dll", CharSet = CharSet.Auto, CallingConvention = CallingConvention.StdCall)]
         public static extern void mouse_event(uint dwFlags, uint dx, uint dy, uint dwData, int dwExtraInfo);
-        [DllImport("user32.dll")] // Bottom 4 are for Record!
+        [DllImport("user32.dll")] // Bottom 4 are for recording any mouse input
         private static extern IntPtr SetWindowsHookEx(int idHook, LowLevelMouseProc lpfn, IntPtr hMod, uint dwThreadId);
         [DllImport("user32.dll")]
         private static extern bool UnhookWindowsHookEx(IntPtr hhk);
@@ -58,6 +73,7 @@ namespace OP_Macro
         {
             InitializeComponent();
 
+            LoadSavedRecording();
             CTypeCB.SelectedIndex = 0;
             MButtonCB.SelectedIndex = 0;
             TBHours.ContextMenuStrip = new ContextMenuStrip();
@@ -65,20 +81,39 @@ namespace OP_Macro
             TBSeconds.ContextMenuStrip = new ContextMenuStrip();
             TBMilliseconds.ContextMenuStrip = new ContextMenuStrip();
 
+            // Extracting keys from settings
+            autoclickerKey = Properties.Settings.Default.autoclickerHotkeyProperty;
+            textKey = Properties.Settings.Default.textHotkeyProperty;
+            recordKey = Properties.Settings.Default.recordHotkeyProperty;
+            replayKey = Properties.Settings.Default.replayHotkeyProperty;
+            firstCoordKey = Properties.Settings.Default.firstCoordHotkeyProperty;
+            secondCoordKey = Properties.Settings.Default.secondCoordHotkeyProperty;
+            teleportKey = Properties.Settings.Default.teleportHotkeyProperty;
+            richText1Key = Properties.Settings.Default.richText1HotkeyProperty;
+            richText2Key = Properties.Settings.Default.richText2HotkeyProperty;
+            richText3Key = Properties.Settings.Default.richText3HotkeyProperty;
+
             // Registering Hotkeys
-            bool autoclickerRegister = RegisterHotKey(this.Handle, 1, 0, (uint)Keys.F1);
-            autoclickerVK = (uint)Keys.F1;
-            bool firstCoordsRegister = RegisterHotKey(this.Handle, 5, 0, (uint)Keys.F2);
-            bool secondCoordsRegister = RegisterHotKey(this.Handle, 6, 0, (uint)Keys.F3);
-            bool textRegister = RegisterHotKey(this.Handle, 2, 0, (uint)Keys.F4);
-            textVK = (uint)Keys.F4;
-            bool recordRegister = RegisterHotKey(this.Handle, 3, 0, (uint)Keys.F5);
-            bool replayRegister = RegisterHotKey(this.Handle, 4, 0, (uint)Keys.F6);
-            bool teleportRegister = RegisterHotKey(this.Handle, 7, 0, (uint)Keys.F7);
+            bool autoclickerRegister = RegisterHotKey(this.Handle, 1, 0, autoclickerKey);
+            bool firstCoordsRegister = RegisterHotKey(this.Handle, 5, 0, firstCoordKey);
+            bool secondCoordsRegister = RegisterHotKey(this.Handle, 6, 0, secondCoordKey);
+            bool textRegister = RegisterHotKey(this.Handle, 2, 0, textKey);
+            bool recordRegister = RegisterHotKey(this.Handle, 3, 0, recordKey);
+            bool replayRegister = RegisterHotKey(this.Handle, 4, 0, replayKey);
+            bool teleportRegister = RegisterHotKey(this.Handle, 7, 0, teleportKey);
+            bool richText1Register = RegisterHotKey(this.Handle, 8, 0, richText1Key);
+            bool richText2Register = RegisterHotKey(this.Handle, 9, 0, richText2Key);
+            bool richText3Register = RegisterHotKey(this.Handle, 10, 0, richText3Key);
         }
 
         protected override void WndProc(ref Message m)
         {
+            if (!listeningForKeys)
+            {
+                base.WndProc(ref m);
+                return;
+            }
+
             if (m.Msg == 0x0312)
             {
                 if (m.WParam.ToInt32() == 1)
@@ -88,6 +123,7 @@ namespace OP_Macro
                 }
                 else if (m.WParam.ToInt32() == 2)
                 {
+                    UnregisterEverything();
                     if (textCheckBox.Checked)
                     {
                         for (int i = 0; i < textNumBox.Value; i++)
@@ -96,13 +132,18 @@ namespace OP_Macro
                         }
                     }
                     else SendKeys.Send(textTB.Text);
+                    RegisterEverything();
                 }
                 else if (m.WParam.ToInt32() == 3)
                 {
+                    recordActionLabel.Text = "Активно";
+                    recordClicksCounter = 0;
                     Record();
                 }
                 else if (m.WParam.ToInt32() == 4)
                 {
+                    replayActionLabel.Text = "Активно";
+                    loopsCounter = 0;
                     StartReplay();
                 }
                 else if (m.WParam.ToInt32() == 5)
@@ -147,21 +188,103 @@ namespace OP_Macro
                 {
                     TeleportFunc();
                 }
+                else if (m.WParam.ToInt32() == 8)
+                {
+                    UnregisterEverything();
+                    string filePath = Path.Combine(Application.StartupPath, "text1.txt");
+
+                    if (File.Exists(filePath))
+                    {
+                        string textToSend = File.ReadAllText(filePath);
+                        SendKeys.Send(textToSend);
+                    }
+                    else
+                    {
+                        MessageBox.Show("Запазеният текст не е намерен!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                    RegisterEverything();
+                }
+                else if (m.WParam.ToInt32() == 9)
+                {
+                    UnregisterEverything();
+                    string filePath = Path.Combine(Application.StartupPath, "text2.txt");
+
+                    if (File.Exists(filePath))
+                    {
+                        string textToSend = File.ReadAllText(filePath);
+                        SendKeys.Send(textToSend);
+                    }
+                    else
+                    {
+                        MessageBox.Show("Запазеният текст не е намерен!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                    RegisterEverything();
+                }
+                else if (m.WParam.ToInt32() == 10)
+                {
+                    UnregisterEverything();
+                    string filePath = Path.Combine(Application.StartupPath, "text3.txt");
+
+                    if (File.Exists(filePath))
+                    {
+                        string textToSend = File.ReadAllText(filePath);
+                        SendKeys.Send(textToSend);
+                    }
+                    else
+                    {
+                        MessageBox.Show("Запазеният текст не е намерен!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                    RegisterEverything();
+                }
             }
             base.WndProc(ref m);
+        }
+
+        private void UnregisterEverything()
+        {
+            UnregisterHotKey(this.Handle, 1);
+            UnregisterHotKey(this.Handle, 2);
+            UnregisterHotKey(this.Handle, 3);
+            UnregisterHotKey(this.Handle, 4);
+            UnregisterHotKey(this.Handle, 5);
+            UnregisterHotKey(this.Handle, 6);
+            UnregisterHotKey(this.Handle, 7);
+            UnregisterHotKey(this.Handle, 8);
+            UnregisterHotKey(this.Handle, 9);
+            UnregisterHotKey(this.Handle, 10);
+        }
+
+        private void RegisterEverything()
+        {
+            RegisterHotKey(this.Handle, 1, 0, autoclickerKey);
+            RegisterHotKey(this.Handle, 5, 0, firstCoordKey);
+            RegisterHotKey(this.Handle, 6, 0, secondCoordKey);
+            RegisterHotKey(this.Handle, 2, 0, textKey);
+            RegisterHotKey(this.Handle, 3, 0, recordKey);
+            RegisterHotKey(this.Handle, 4, 0, replayKey);
+            RegisterHotKey(this.Handle, 7, 0, teleportKey);
+            RegisterHotKey(this.Handle, 8, 0, richText1Key);
+            RegisterHotKey(this.Handle, 9, 0, richText2Key);
+            RegisterHotKey(this.Handle, 10, 0, richText3Key);
         }
 
         private void TeleportFunc()
         {
             if (coords.Count != 0)
             {
-                if (counter >= coords.Count) counter = 0;
+                if (counter >= coords.Count)
+                {
+                    counter = 0;
+                    loopsCounterTeleport++;
+                    teleportLoopsLabel.Text = "Повторения: " + loopsCounterTeleport;
+                }
                 SetCursorPos(coords[counter].X, coords[counter].Y);
                 counter++;
+                teleportPositionLabel.Text = "Индекс: " + counter;
             }
             else
             {
-                MessageBox.Show("No coordinates preset!");
+                MessageBox.Show("Няма поставени координати!");
             }
         }
 
@@ -171,7 +294,7 @@ namespace OP_Macro
             {
                 if (recordedEvents.Count == 0)
                 {
-                    MessageBox.Show("No events recorded.");
+                    MessageBox.Show("Няма нищо заснето.");
                     return;
                 }
 
@@ -186,6 +309,7 @@ namespace OP_Macro
             {
                 replayTimer.Stop();
                 isReplaying = false;
+                replayActionLabel.Text = "Неактивно";
             }
         }
 
@@ -196,8 +320,10 @@ namespace OP_Macro
                 // Restart the replay loop
                 replayTimer.Stop();
                 replayIndex = 0;
+                loopsCounter++;
                 replayTimer.Interval = Math.Max(recordedEvents[replayIndex].Delay, 1);
                 replayTimer.Start();
+                replayLoopLabel.Text = "Повторения: " + loopsCounter.ToString();
                 return;
             }
 
@@ -238,10 +364,15 @@ namespace OP_Macro
                 int message = wParam.ToInt32();
                 if (message == WM_LBUTTONDOWN || message == WM_RBUTTONDOWN || message == WM_MBUTTONDOWN || message == 0x0200) // 0x0200 = WM_MOUSEMOVE
                 {
+                    if (message == WM_LBUTTONDOWN)
+                    {
+                        recordClicksCounter++;
+                        recordClicksLabel.Text = "Кликове: " + recordClicksCounter;
+                    }
                     int delay = (int)(DateTime.Now - lastRecordTime).TotalMilliseconds;
 
-                    // SKIP recording movements that happen too fast (optional, only for WM_MOUSEMOVE)
-                    if (message == 0x0200 && delay < 10)  // Example: only accept movement if at least 10ms passed
+                    // Skips recording movements that happen too fast
+                    if (message == 0x0200 && delay < 10)  // This thing accepts movement only if it has passed in the last 10 ms
                     {
                         return CallNextHookEx(hookID, nCode, wParam, lParam);
                     }
@@ -275,6 +406,7 @@ namespace OP_Macro
             }
             else
             {
+                recordActionLabel.Text = "Неактивно";
                 isRecording = false;
                 UnhookWindowsHookEx(hookID);
             }
@@ -287,7 +419,7 @@ namespace OP_Macro
                 // Start the autoclicker
                 isAutoclickerRunning = true;
                 autoclicker.Start();
-                clickToggleButton.Text = "Toggle (ON)";
+                clickToggleButton.Text = "Изключи";
                 clickToggleButton.Enabled = false;
                 await Task.Delay(1000);
                 clickToggleButton.Enabled = true;
@@ -299,7 +431,7 @@ namespace OP_Macro
                 // Stop the autoclicker
                 isAutoclickerRunning = false;
                 autoclicker.Stop();
-                clickToggleButton.Text = "Toggle";
+                clickToggleButton.Text = "Включи";
                 RepetitionCB.Enabled = true;
                 repetitionsNumBox.Enabled = true;
             }
@@ -311,7 +443,7 @@ namespace OP_Macro
             {
                 isAutoclickerRunning = true;
                 autoclickerRepetition.Start();
-                clickToggleButton.Text = "Toggle (ON)";
+                clickToggleButton.Text = "Изключи";
                 clickToggleButton.Enabled = false;
                 await Task.Delay(1000);
                 clickToggleButton.Enabled = true;
@@ -322,7 +454,7 @@ namespace OP_Macro
             {
                 isAutoclickerRunning = false;
                 autoclickerRepetition.Stop();
-                clickToggleButton.Text = "Toggle";
+                clickToggleButton.Text = "Включи";
                 RepetitionCB.Enabled = true;
                 repetitionsNumBox.Enabled = true;
             }
@@ -338,7 +470,7 @@ namespace OP_Macro
         {
             if (!int.TryParse(TBHours.Text, out int i) || int.Parse(TBHours.Text) < 0)
             {
-                MessageBox.Show("The hours box can't be less than 0.");
+                MessageBox.Show("Часовете не могат да са под 0.");
                 TBHours.Text = "0";
             }
             foreach (var num in TBHours.Text)
@@ -375,7 +507,7 @@ namespace OP_Macro
         {
             if (!int.TryParse(TBMinutes.Text, out int i) || int.Parse(TBMinutes.Text) < 0)
             {
-                MessageBox.Show("The minutes box can't be less than 0.");
+                MessageBox.Show("Минутите не могат да са под 0.");
                 TBMinutes.Text = "0";
             }
             foreach (var num in TBMinutes.Text)
@@ -412,7 +544,7 @@ namespace OP_Macro
         {
             if (!int.TryParse(TBSeconds.Text, out int i) || int.Parse(TBSeconds.Text) < 0)
             {
-                MessageBox.Show("The seconds box can't be less than 0.");
+                MessageBox.Show("Секундите не могат да са 0.");
                 TBSeconds.Text = "0";
             }
             foreach (var num in TBSeconds.Text)
@@ -449,7 +581,7 @@ namespace OP_Macro
         {
             if (!int.TryParse(TBMilliseconds.Text, out int i) || int.Parse(TBMilliseconds.Text) < 1)
             {
-                MessageBox.Show("The milliseconds box can't be less than 1.");
+                MessageBox.Show("Милисекундите не могат да са 1.");
                 TBMilliseconds.Text = "1000";
             }
             foreach (var num in TBMilliseconds.Text)
@@ -504,7 +636,7 @@ namespace OP_Macro
 
         protected override void OnFormClosing(FormClosingEventArgs e) // Unregister hotkeys so they won't bother other apps.
         {
-            UnregisterHotKey(this.Handle, 1);
+            UnregisterEverything();
             base.OnFormClosing(e);
         }
 
@@ -578,15 +710,261 @@ namespace OP_Macro
 
         private void clickHSButton_Click(object sender, EventArgs e)
         {
-            HotkeySettings autoclickerHotkeySettings = new HotkeySettings(autoclickerVK);
-            autoclickerHotkeySettings.ShowDialog();
+            listeningForKeys = false;
+
+            using (HotkeySettings autoclickerHotkeySettings = new HotkeySettings(autoclickerKey))
+            {
+                if (autoclickerHotkeySettings.ShowDialog() == DialogResult.OK)
+                {
+                    UnregisterHotKey(this.Handle, 1);
+                    autoclickerKey = (uint)autoclickerHotkeySettings.newKey;
+                    Properties.Settings.Default.autoclickerHotkeyProperty = autoclickerKey;
+                    Properties.Settings.Default.Save();
+                    RegisterHotKey(this.Handle, 1, 0, (uint)autoclickerKey);
+                }
+            }
+
+            listeningForKeys = true;
         }
 
         private void textHSButton_Click(object sender, EventArgs e)
         {
-            HotkeySettings autoclickerHotkeySettings = new HotkeySettings(textVK);
-            autoclickerHotkeySettings.ShowDialog();
+            listeningForKeys = false;
+
+            using (HotkeySettings textHotkeySettings = new HotkeySettings(textKey))
+            {
+                if (textHotkeySettings.ShowDialog() == DialogResult.OK)
+                {
+                    UnregisterHotKey(this.Handle, 2);
+                    textKey = (uint)textHotkeySettings.newKey;
+                    Properties.Settings.Default.textHotkeyProperty = textKey;
+                    Properties.Settings.Default.Save();
+                    RegisterHotKey(this.Handle, 2, 0, (uint)textKey);
+                }
+            }
+
+            listeningForKeys = true;
+        }
+
+        private void recordHSButton_Click(object sender, EventArgs e)
+        {
+            listeningForKeys = false;
+
+            using (HotkeySettings recordHotkeySettings = new HotkeySettings(recordKey))
+            {
+                if (recordHotkeySettings.ShowDialog() == DialogResult.OK)
+                {
+                    UnregisterHotKey(this.Handle, 3);
+                    recordKey = (uint)recordHotkeySettings.newKey;
+                    Properties.Settings.Default.recordHotkeyProperty = recordKey;
+                    Properties.Settings.Default.Save();
+                    RegisterHotKey(this.Handle, 3, 0, (uint)recordKey);
+                }
+            }
+
+            listeningForKeys = true;
+        }
+
+        private void replayHSButton_Click(object sender, EventArgs e)
+        {
+            listeningForKeys = false;
+
+            using (HotkeySettings replayHotkeySettings = new HotkeySettings(replayKey))
+            {
+                if (replayHotkeySettings.ShowDialog() == DialogResult.OK)
+                {
+                    UnregisterHotKey(this.Handle, 4);
+                    replayKey = (uint)replayHotkeySettings.newKey;
+                    Properties.Settings.Default.replayHotkeyProperty = replayKey;
+                    Properties.Settings.Default.Save();
+                    RegisterHotKey(this.Handle, 4, 0, (uint)replayKey);
+                }
+            }
+
+            listeningForKeys = true;
+        }
+
+        private void teleportHSButton_Click(object sender, EventArgs e)
+        {
+            listeningForKeys = false;
+
+            using (CoordinatesHotkeySettings coordsHotkeySettings = new CoordinatesHotkeySettings(firstCoordKey, secondCoordKey))
+            {
+                if (coordsHotkeySettings.ShowDialog() == DialogResult.OK)
+                {
+                    UnregisterHotKey(this.Handle, 5);
+                    UnregisterHotKey(this.Handle, 6);
+                    firstCoordKey = (uint)coordsHotkeySettings.newFirstKey;
+                    secondCoordKey = (uint)coordsHotkeySettings.newSecondKey;
+                    Properties.Settings.Default.firstCoordHotkeyProperty = firstCoordKey;
+                    Properties.Settings.Default.secondCoordHotkeyProperty = secondCoordKey;
+                    Properties.Settings.Default.Save();
+                    RegisterHotKey(this.Handle, 5, 0, (uint)firstCoordKey);
+                    RegisterHotKey(this.Handle, 6, 0, (uint)secondCoordKey);
+                }
+            }
+
+            listeningForKeys = true;
+        }
+
+        private void teleport2HSButton_Click(object sender, EventArgs e)
+        {
+            listeningForKeys = false;
+
+            using (HotkeySettings teleportHotkeySettings = new HotkeySettings(teleportKey))
+            {
+                if (teleportHotkeySettings.ShowDialog() == DialogResult.OK)
+                {
+                    UnregisterHotKey(this.Handle, 7);
+                    teleportKey = (uint)teleportHotkeySettings.newKey;
+                    Properties.Settings.Default.teleportHotkeyProperty = teleportKey;
+                    Properties.Settings.Default.Save();
+                    RegisterHotKey(this.Handle, 7, 0, (uint)teleportKey);
+                }
+            }
+
+            listeningForKeys = true;
+        }
+
+        private void richText1_Click(object sender, EventArgs e)
+        {
+            listeningForKeys = false;
+
+            using (AdvancedText richText = new AdvancedText(Path.Combine(Application.StartupPath, "text1.txt")))
+            {
+                richText.ShowDialog();
+            }
+
+            listeningForKeys = true;
+        }
+
+        private void richText2_Click(object sender, EventArgs e)
+        {
+            listeningForKeys = false;
+
+            using (AdvancedText richText = new AdvancedText(Path.Combine(Application.StartupPath, "text2.txt")))
+            {
+                richText.ShowDialog();
+            }
+
+            listeningForKeys = true;
+        }
+
+        private void richText3_Click(object sender, EventArgs e)
+        {
+            listeningForKeys = false;
+
+            using (AdvancedText richText = new AdvancedText(Path.Combine(Application.StartupPath, "text3.txt")))
+            {
+                richText.ShowDialog();
+            }
+
+            listeningForKeys = true;
+        }
+
+        private void textASButton_Click(object sender, EventArgs e)
+        {
+            listeningForKeys = false;
+
+            using (TextAdvancedSettings textAdvancedSettings = new TextAdvancedSettings(richText1Key, richText2Key, richText3Key))
+            {
+                if (textAdvancedSettings.ShowDialog() == DialogResult.OK)
+                {
+                    UnregisterHotKey(this.Handle, 8);
+                    UnregisterHotKey(this.Handle, 9);
+                    UnregisterHotKey(this.Handle, 10);
+                    richText1Key = (uint)textAdvancedSettings.newFirstKey;
+                    richText2Key = (uint)textAdvancedSettings.newSecondKey;
+                    richText3Key = (uint)textAdvancedSettings.newThirdKey;
+                    Properties.Settings.Default.richText1HotkeyProperty = richText1Key;
+                    Properties.Settings.Default.richText2HotkeyProperty = richText2Key;
+                    Properties.Settings.Default.richText3HotkeyProperty = richText3Key;
+                    Properties.Settings.Default.Save();
+                    RegisterHotKey(this.Handle, 8, 0, (uint)richText1Key);
+                    RegisterHotKey(this.Handle, 9, 0, (uint)richText2Key);
+                    RegisterHotKey(this.Handle, 10, 0, (uint)richText3Key);
+                }
+            }
+
+            listeningForKeys = true;
+        }
+
+        private void saveCaptureButton_Click(object sender, EventArgs e)
+        {
+            if (recordedEvents.Count > 0)
+            {
+                string savePath = Path.Combine(Application.StartupPath, "savedRecording.json");
+
+                string json = JsonConvert.SerializeObject(recordedEvents, Newtonsoft.Json.Formatting.Indented);
+                File.WriteAllText(savePath, json);
+
+                MessageBox.Show("Запис запазен успешно!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            else
+            {
+                MessageBox.Show("Запис липсващ!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+        }
+
+        private void LoadSavedRecording()
+        {
+            string savePath = Path.Combine(Application.StartupPath, "savedRecording.json");
+
+            if (File.Exists(savePath))
+            {
+                string json = File.ReadAllText(savePath);
+                recordedEvents = JsonConvert.DeserializeObject<List<MouseEventRecord>>(json) ?? new List<MouseEventRecord>();
+            }
+        }
+
+        private void teleportCheckBox_CheckedChanged(object sender, EventArgs e)
+        {
+            if (teleportCheckBox.Checked)
+            {
+                teleportPositionLabel.Visible = true;
+                teleportLoopsLabel.Visible = true;
+            }
+            else
+            {
+                teleportPositionLabel.Visible = false;
+                teleportLoopsLabel.Visible = false;
+            }
+        }
+
+        private void replayStatsCheckBox_CheckedChanged(object sender, EventArgs e)
+        {
+            if (replayStatsCheckBox.Checked)
+            {
+                replayActionLabel.Visible = true;
+                replayLoopLabel.Visible = true;
+            }
+            else
+            {
+                replayActionLabel.Visible = false;
+                replayLoopLabel.Visible = false;
+            }
+        }
+
+        private void recordStatsCheckBox_CheckedChanged(object sender, EventArgs e)
+        {
+            if (recordStatsCheckBox.Checked)
+            {
+                recordClicksLabel.Visible = true;
+                recordActionLabel.Visible = true;
+            }
+            else
+            {
+                recordClicksLabel.Visible = false;
+                recordActionLabel.Visible = false;
+            }
+        }
+
+        private void helpButton_Click(object sender, EventArgs e)
+        {
+            UnregisterEverything();
+            HelpForm help = new HelpForm();
+            help.ShowDialog();
+            RegisterEverything();
         }
     }
 }
- 

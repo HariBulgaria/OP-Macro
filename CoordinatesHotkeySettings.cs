@@ -11,7 +11,7 @@ using System.Windows.Forms;
 
 namespace OP_Macro
 {
-    public partial class HotkeySettings : Form
+    public partial class CoordinatesHotkeySettings : Form
     {
         [DllImport("user32.dll")]
         private static extern IntPtr SetWindowsHookEx(int idHook, LowLevelKeyboardProc lpfn, IntPtr hMod, uint dwThreadId);
@@ -33,43 +33,17 @@ namespace OP_Macro
         private LowLevelKeyboardProc _proc;
         private IntPtr _hookID = IntPtr.Zero;
 
-        public uint newKey;
+        public uint newFirstKey;
+        public uint newSecondKey;
         private bool hotkeyDetecting = false;
 
-        public HotkeySettings(uint hotkey)
+        public CoordinatesHotkeySettings(uint firstKey, uint secondKey)
         {
             InitializeComponent();
-            newKey = hotkey;
-            displayBox.Text = ((Keys)newKey).ToString();
-        }
-
-        private void HotkeySettings_Load(object sender, EventArgs e)
-        {
-
-        }
-
-        private void button1_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void cancelButton_Click(object sender, EventArgs e)
-        {
-            StopKeyHook();
-            this.DialogResult = DialogResult.Cancel;
-            this.Close();
-        }
-
-        private void HotkeySettings_KeyDown(object sender, KeyEventArgs e)
-        {
-
-        }
-
-        private void doneButton_Click(object sender, EventArgs e)
-        {
-            StopKeyHook();
-            this.DialogResult = DialogResult.OK;
-            this.Close();
+            newFirstKey = firstKey;
+            newSecondKey = secondKey;
+            displayBox.Text = ((Keys)newFirstKey).ToString();
+            displayBoxSecond.Text = ((Keys)newSecondKey).ToString();
         }
 
         private void startButton_Click(object sender, EventArgs e)
@@ -81,6 +55,20 @@ namespace OP_Macro
                 hotkeyDetecting = true;
                 displayBox.Text = "Натисни бутон...";
             }
+        }
+
+        private void doneButton_Click(object sender, EventArgs e)
+        {
+            StopKeyHook();
+            this.DialogResult = DialogResult.OK;
+            this.Close();
+        }
+
+        private void cancelButton_Click(object sender, EventArgs e)
+        {
+            StopKeyHook();
+            this.DialogResult = DialogResult.Cancel;
+            this.Close();
         }
 
         private void StopKeyHook()
@@ -97,16 +85,34 @@ namespace OP_Macro
             if (nCode >= 0 && wParam == (IntPtr)WM_KEYDOWN)
             {
                 int vkCode = Marshal.ReadInt32(lParam);
-                newKey = (uint)vkCode;
+                newFirstKey = (uint)vkCode;
                 displayBox.Text = ((Keys)vkCode).ToString();
                 StopKeyHook();
             }
             return CallNextHookEx(_hookID, nCode, wParam, lParam);
         }
 
-        private void HotkeySettings_FormClosing(object sender, FormClosingEventArgs e)
+        private IntPtr HookCallbackSecond(int nCode, IntPtr wParam, IntPtr lParam)
         {
-            StopKeyHook();
+            if (nCode >= 0 && wParam == (IntPtr)WM_KEYDOWN)
+            {
+                int vkCode = Marshal.ReadInt32(lParam);
+                newSecondKey = (uint)vkCode;
+                displayBoxSecond.Text = ((Keys)vkCode).ToString();
+                StopKeyHook();
+            }
+            return CallNextHookEx(_hookID, nCode, wParam, lParam);
+        }
+
+        private void startButtonSecond_Click(object sender, EventArgs e)
+        {
+            if (!hotkeyDetecting)
+            {
+                _proc = HookCallbackSecond;
+                _hookID = SetWindowsHookEx(WH_KEYBOARD_LL, _proc, GetModuleHandle(null), 0);
+                hotkeyDetecting = true;
+                displayBoxSecond.Text = "Натисни бутон...";
+            }
         }
     }
 }
