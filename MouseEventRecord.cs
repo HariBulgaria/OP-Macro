@@ -8,9 +8,9 @@ namespace OP_Macro
 {
     public class MouseEventRecord
     {
-        public int X { get; set; }       // X-coordinate of the mouse click
-        public int Y { get; set; }       // Y-coordinate of the mouse click
-        public int Delay { get; set; }   // Delay in milliseconds before this event is replayed
+        public int X { get; set; }
+        public int Y { get; set; }
+        public int Delay { get; set; }
         public int Button { get; set; }
     }
 }

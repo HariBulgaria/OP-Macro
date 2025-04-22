@@ -205,6 +205,7 @@ namespace OP_Macro
             CTypeCB.Name = "CTypeCB";
             CTypeCB.Size = new Size(151, 23);
             CTypeCB.TabIndex = 13;
+            CTypeCB.SelectedIndexChanged += CTypeCB_SelectedIndexChanged;
             // 
             // labelClickType
             // 
@@ -225,6 +226,7 @@ namespace OP_Macro
             MButtonCB.Name = "MButtonCB";
             MButtonCB.Size = new Size(126, 23);
             MButtonCB.TabIndex = 11;
+            MButtonCB.SelectedIndexChanged += MButtonCB_SelectedIndexChanged;
             // 
             // labelMouseButton
             // 

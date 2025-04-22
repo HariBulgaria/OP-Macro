@@ -196,7 +196,14 @@ namespace OP_Macro
                     if (File.Exists(filePath))
                     {
                         string textToSend = File.ReadAllText(filePath);
-                        SendKeys.Send(textToSend);
+                        if (textCheckBox.Checked)
+                        {
+                            for (int i = 0; i < textNumBox.Value; i++)
+                            {
+                                SendKeys.Send(textToSend);
+                            }
+                        }
+                        else SendKeys.Send(textToSend);
                     }
                     else
                     {
@@ -212,7 +219,14 @@ namespace OP_Macro
                     if (File.Exists(filePath))
                     {
                         string textToSend = File.ReadAllText(filePath);
-                        SendKeys.Send(textToSend);
+                        if (textCheckBox.Checked)
+                        {
+                            for (int i = 0; i < textNumBox.Value; i++)
+                            {
+                                SendKeys.Send(textToSend);
+                            }
+                        }
+                        else SendKeys.Send(textToSend);
                     }
                     else
                     {
@@ -228,7 +242,14 @@ namespace OP_Macro
                     if (File.Exists(filePath))
                     {
                         string textToSend = File.ReadAllText(filePath);
-                        SendKeys.Send(textToSend);
+                        if (textCheckBox.Checked)
+                        {
+                            for (int i = 0; i < textNumBox.Value; i++)
+                            {
+                                SendKeys.Send(textToSend);
+                            }
+                        }
+                        else SendKeys.Send(textToSend);
                     }
                     else
                     {
@@ -297,7 +318,6 @@ namespace OP_Macro
                     MessageBox.Show("Няма нищо заснето.");
                     return;
                 }
-
                 replayIndex = 0;
                 replayTimer = new System.Windows.Forms.Timer();
                 replayTimer.Tick += ReplayTimer_Tick;
@@ -317,7 +337,6 @@ namespace OP_Macro
         {
             if (replayIndex >= recordedEvents.Count)
             {
-                // Restart the replay loop
                 replayTimer.Stop();
                 replayIndex = 0;
                 loopsCounter++;
@@ -327,13 +346,10 @@ namespace OP_Macro
                 return;
             }
 
-            // Get the next recorded event
             var recordedEvent = recordedEvents[replayIndex];
 
-            // Move cursor to the recorded position
             SetCursorPos(recordedEvent.X, recordedEvent.Y);
 
-            // Simulate mouse click based on the recorded button
             switch (recordedEvent.Button)
             {
                 case WM_LBUTTONDOWN:
@@ -347,10 +363,8 @@ namespace OP_Macro
                     break;
             }
 
-            // Move to the next event
             replayIndex++;
 
-            // If there are more events, update the timer interval for the next event
             if (replayIndex < recordedEvents.Count)
             {
                 replayTimer.Interval = Math.Max(recordedEvents[replayIndex].Delay, 1);
@@ -362,7 +376,7 @@ namespace OP_Macro
             if (nCode >= 0 && isRecording)
             {
                 int message = wParam.ToInt32();
-                if (message == WM_LBUTTONDOWN || message == WM_RBUTTONDOWN || message == WM_MBUTTONDOWN || message == 0x0200) // 0x0200 = WM_MOUSEMOVE
+                if (message == WM_LBUTTONDOWN || message == WM_RBUTTONDOWN || message == WM_MBUTTONDOWN || message == 0x0200) // 0x0200 = mouse move
                 {
                     if (message == WM_LBUTTONDOWN)
                     {
@@ -416,24 +430,25 @@ namespace OP_Macro
         {
             if (!isAutoclickerRunning)
             {
-                // Start the autoclicker
                 isAutoclickerRunning = true;
                 autoclicker.Start();
                 clickToggleButton.Text = "Изключи";
                 clickToggleButton.Enabled = false;
-                await Task.Delay(1000);
-                clickToggleButton.Enabled = true;
                 RepetitionCB.Enabled = false;
                 repetitionsNumBox.Enabled = false;
+                await Task.Delay(1000);
+                clickToggleButton.Enabled = true;
             }
             else
             {
-                // Stop the autoclicker
                 isAutoclickerRunning = false;
                 autoclicker.Stop();
                 clickToggleButton.Text = "Включи";
                 RepetitionCB.Enabled = true;
-                repetitionsNumBox.Enabled = true;
+                if (RepetitionCB.Checked)
+                {
+                    repetitionsNumBox.Enabled = true;
+                }
             }
         }
 
@@ -445,10 +460,10 @@ namespace OP_Macro
                 autoclickerRepetition.Start();
                 clickToggleButton.Text = "Изключи";
                 clickToggleButton.Enabled = false;
-                await Task.Delay(1000);
-                clickToggleButton.Enabled = true;
                 RepetitionCB.Enabled = false;
                 repetitionsNumBox.Enabled = false;
+                await Task.Delay(1000);
+                clickToggleButton.Enabled = true;
             }
             else
             {
@@ -616,7 +631,11 @@ namespace OP_Macro
 
         private void clickToggleButton_Click(object sender, EventArgs e)
         {
-            ToggleAutoclicker();
+            if (RepetitionCB.Checked)
+            {
+                ToggleAutoclickerRepetition();
+            }
+            else ToggleAutoclicker();
         }
 
         private void autoclicker_Tick(object sender, EventArgs e)
@@ -687,13 +706,13 @@ namespace OP_Macro
 
         private void autoclickerRepetition_Tick(object sender, EventArgs e)
         {
-            autoclickerRepCounter++;
             if (autoclickerRepCounter >= repetitionsNumBox.Value)
             {
                 ToggleAutoclickerRepetition();
                 autoclickerRepCounter = 0;
             }
             SimulateClick();
+            autoclickerRepCounter++;
         }
 
         private void textCheckBox_CheckedChanged(object sender, EventArgs e)

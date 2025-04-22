@@ -8,9 +8,9 @@ namespace OP_Macro
 {
     public class Coord
     {
-        public int Id { get; set; } // ID of coords 
-        public int X { get; set; } // X-coordinate
-        public int Y { get; set; } // Y-coordinate
+        public int Id { get; set; }
+        public int X { get; set; }
+        public int Y { get; set; }
         public Coord(int id, int x, int y)
         {
             Id = id;
